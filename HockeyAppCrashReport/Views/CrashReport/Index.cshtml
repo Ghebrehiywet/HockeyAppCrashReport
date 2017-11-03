@@ -1,0 +1,286 @@
+﻿@model HockeyAppCrashReport.Models.HockeyAppCrashReportLogic.CrashReasonReportList
+
+@{
+    ViewBag.Title = "Index";
+    ViewBag.Name = "List of Crashes";
+    ViewBag.TableId = "tblCrashes";
+    ViewBag.DefualtSortingColumnIndex = 1;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+
+<form action="/CrashReport/CrashSearch" method="get">
+    <div class="form-inline">
+        @{
+            <br />
+            <select class="form-control form-horizontal" onchange="OptionSelected();" id="crashProperty" name="crashProperty" required>
+                <option value="">Select</option>
+                <option value="app_id">App ID</option>
+                <option value="crash_reason_id">Crash Reason ID</option>
+                <option value="created_at">Created At</option>
+                <option value="updated_at">Updated At</option>
+                <option value="oem">OEM</option>
+                <option value="model">Model</option>
+                <option value="os_version">OS Version</option>
+                <option value="jail_break">Jail Break</option>
+                <option value="contact_string">Contact String</option>
+                <option value="user_string">User String</option>
+                <option value="has_log">Has Log</option>
+                <option value="has_description">Has Description</option>
+                <option value="app_version_id">App Version ID</option>
+                <option value="bundle_version">Bundle Version</option>
+                <option value="bundle_short_version">Bundle Short Version</option>
+            </select>
+            <input type="text" id="querytxt" name="querytxt" class="active form-control form-horizontal" required />
+            <button type="submit" value="Search" id="Search"
+                    class="btn btn-success btn-group-lg glyphicon glyphicon-search form-horizontal">
+                Search
+            </button>
+        }
+    </div>
+</form>
+
+
+<script>
+    function PrevPage() {
+        var currentPage = $("#current_page").val();
+        debugger;
+        var PrevPage = Number(currentPage) - 1;
+        $("#current_page").val(PrevPage);
+    };
+    function NextPage() {
+        var currentPage = $("#current_page").val();
+        debugger;
+        var NextPage = Number(currentPage) + 1;
+        $("#current_page").val(NextPage);
+    };
+</script>
+
+
+<table class="table">
+    <tr>
+        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.current_page)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.per_page)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.total_entries)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.total_pages)
+        </th>
+        <th></th>
+        <th>To page No/Per Page</th>
+    </tr>
+    <tr>
+        @using (Html.BeginForm("Index", "CrashReport", FormMethod.Get))
+        {
+            <td>
+                @if (Model.current_page > 1)
+                {
+                    <button value="Prev" type="submit" onclick="PrevPage();" class="btn btn-success glyphicon glyphicon-backward"> Prev</button>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.status)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.current_page)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.per_page)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.total_entries)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.total_pages)
+            </td>
+            <td>
+                @if (Model.current_page < Model.total_pages)
+                {
+                    <button value="Next" onclick="NextPage();" type="submit" class="btn btn-success glyphicon glyphicon-forward"> Next</button>
+                }
+            </td>
+
+            <td class="hidden">
+                @Html.EditorFor(model => model.current_page, new { htmlAttributes = new { @type = "number", @min = "1", @max = Model.total_pages, @value = "0" } })
+                /
+                @Html.EditorFor(model => model.per_page, new { htmlAttributes = new { @type = "number", @min = "25", @max = "100", @step = "25", @value = "0" } })
+                <button type="submit" class="btn btn-success glyphicon glyphicon-check"> Go</button>
+            </td>
+        }
+
+        @using (Html.BeginForm("Index", "CrashReport", FormMethod.Get))
+        {
+            if (Model.total_entries > 25)
+            {
+                <td>
+                    @Html.EditorFor(model => model.current_page, new { htmlAttributes = new { @type = "number", @min = "1", @max = Model.total_pages, @value = "0" } })
+                    /
+                    @Html.EditorFor(model => model.per_page, new { htmlAttributes = new { @type = "number", @min = "25", @max = "100", @step = "25", @value = "0" } })
+                    <button type="submit" class="btn btn-success glyphicon glyphicon-check"> Go</button>
+                </td>
+            }
+        }
+    </tr>
+</table>
+
+
+<div class="table box-body table-responsive no-padding">
+    <table id="tblCrashes" class="table table-bordered table-hover table-striped " cellspacing="0" role="grid" width="100%">
+        <thead>
+            <tr>
+                <td>Index</td>
+                <td>
+                    @Html.DisplayName("id")
+                </td>
+                <td>
+                    @Html.DisplayName("app_id")
+                </td>
+                <td>
+                    @Html.DisplayName("created_at")
+                </td>
+                <td>
+                    @Html.DisplayName("updated_at")
+                </td>
+                <td>
+                    @Html.DisplayName("status")
+                </td>
+                <td>
+                    @Html.DisplayName("reason")
+                </td>
+                <td>
+                    @Html.DisplayName("last_crash_at")
+                </td>
+                <td>
+                    @Html.DisplayName("exception_type")
+                </td>
+                <td>
+                    @Html.DisplayName("@fixed")
+                </td>
+                <td>
+                    @Html.DisplayName("app_version_id")
+                </td>
+                <td>
+                    @Html.DisplayName("bundle_version")
+                </td>
+                <td>
+                    @Html.DisplayName("bundle_short_version")
+                </td>
+                <td>
+                    @Html.DisplayName("number_of_crashes")
+                </td>
+                <td>
+                    @Html.DisplayName("grouping_hash")
+                </td>
+                <td>
+                    @Html.DisplayName("grouping_type")
+                </td>
+                <td>
+                    @Html.DisplayName("method")
+                </td>
+                <td>
+                    @Html.DisplayName("file")
+                </td>
+                <td>
+                    @Html.DisplayName("@class")
+                </td>
+                <td>
+                    @Html.DisplayName("line")
+                </td>
+                <td>
+                    @Html.DisplayName("pattern")
+                </td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model.crash_reasons != null)
+                {
+                    int index = 1;
+                    foreach (var item in Model.crash_reasons)
+                    {
+                        <tr>
+                            <td>@(index++)</td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.app_id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.created_at)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.updated_at)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.status)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.reason)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.last_crash_at)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.exception_type)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.@fixed)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.app_version_id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.bundle_version)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.bundle_short_version)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.number_of_crashes)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.grouping_hash)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.grouping_type)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.method)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.file)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.@class)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.line)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.pattern)
+                            </td>
+                            <td>
+                                @*@Html.ActionLink("Edit", "Edit", new { id = item.id }) |*@
+                                @Html.ActionLink("Details", "Details", new { id = item.id })
+                                @*@Html.ActionLink("Delete", "Delete", new { id = item.id })*@
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+</div>

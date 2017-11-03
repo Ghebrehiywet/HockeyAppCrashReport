@@ -1,0 +1,21 @@
+﻿@model HockeyAppCrashReport.Models.HockeyAppCrashReportLogic.TwoDimensionalData
+@using HockeyAppCrashReport.Models.HockeyAppCrashReportLogic;
+@{
+    ViewBag.Title = "Bar Chart";
+}
+
+<h2>Crash Report</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.Chart("CrashReportChart", Model.Data, "Date",
+        "Hits in Thousands");
+}
+@section Scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            barChart();
+        });
+    </script>
+}
