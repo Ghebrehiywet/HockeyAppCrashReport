@@ -30,7 +30,7 @@ namespace HockeyAppCrashReport.Controllers.HockeyAppCrashReport
         public ActionResult Histogram(string startDate, string endTime)
         {
             Histogram histogram = crashReasonReportLogic.Histogram(Convert.ToDateTime(startDate), Convert.ToDateTime(endTime));
-            
+
             return View(histogram);
         }
         // GET: CrashReport/CrashSearch/query
@@ -47,11 +47,32 @@ namespace HockeyAppCrashReport.Controllers.HockeyAppCrashReport
 
 
 
-        public ActionResult BarChart(string startDate, string endTime)
+        public ActionResult BarChart(string startTime, string endTime)
         {
-            Histogram histogram = crashReasonReportLogic.Histogram(Convert.ToDateTime(startDate), Convert.ToDateTime(endTime));
+            DateTime startDate;
+            if (!DateTime.TryParse(startTime, out startDate))
+            {
+                startDate = DateTime.Now.AddDays(-10);
+            }
+            DateTime endDate;
+            if (!DateTime.TryParse(endTime, out endDate))
+            {
+                endDate = DateTime.Now;
+            }
+
+
+            Histogram histogram = crashReasonReportLogic.Histogram(startDate, endDate);
 
             TwoDimensionalData data = new TwoDimensionalData();
+
+            if (histogram?.histogram != null)
+            {
+                foreach (var histogramObj in histogram?.histogram)
+                {
+                    data.Data.Add(new string[] { histogramObj[0]?.ToString(), histogramObj[1]?.ToString() });
+                }
+            }
+
             //data.Data.AddRange(histogram?.histogram?.Select(x => new { x., x.ID ));
             //data.Data.Add(new int[] { 2007, 23045 });
             //data.Data.Add(new int[] { 2008, 20345 });

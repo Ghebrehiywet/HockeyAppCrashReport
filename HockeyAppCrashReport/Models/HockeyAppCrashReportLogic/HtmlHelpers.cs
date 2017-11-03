@@ -15,7 +15,7 @@ namespace HockeyAppCrashReport.Models.HockeyAppCrashReportLogic
             string xTitle,
             string yTitle)
         {
-            return SetupHtml(chartName, GetDataSourceFromIntArray(dataSource),
+            return SetupHtml(chartName, GetDataSourceFromIntArray(dataSource), dataSource.Count,
                 xTitle, yTitle);
         }
 
@@ -25,7 +25,7 @@ namespace HockeyAppCrashReport.Models.HockeyAppCrashReportLogic
             return "arrDataSource = " + Json.Encode(dataSource);
         }
 
-        private static HtmlString SetupHtml(string chartName, string dataSource,
+        private static HtmlString SetupHtml(string chartName, string dataSource, int dataSourceCount,
             string xTitle, string yTitle)
         {
             TagBuilder container = new TagBuilder("div");
@@ -33,8 +33,8 @@ namespace HockeyAppCrashReport.Models.HockeyAppCrashReportLogic
 
             TagBuilder canvas = new TagBuilder("canvas");
             canvas.Attributes.Add("id", chartName);
-            canvas.Attributes.Add("height", "400");
-            canvas.Attributes.Add("width", "600");
+            canvas.Attributes.Add("height", (500).ToString());
+            canvas.Attributes.Add("width", dataSourceCount < 10 ? 600.ToString() : (50 * dataSourceCount).ToString());
             canvas.SetInnerText(@"Your browser does not support HTML5 Canvas");
 
             TagBuilder script = SetupScript(chartName, dataSource, xTitle, yTitle);
